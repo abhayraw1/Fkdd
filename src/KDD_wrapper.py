@@ -11,7 +11,7 @@ class KDD:
 		self.feature_names = self.get_feature_keys()
 		self.feature_types = self.get_feature_types()
 		self.dataframe = self.get_data()
-		self.data = self.dataframe.drop('class', 1)
+		self.data = self.dataframe.drop('class',1)
 		self.categorical_to_cont()
 		self.labels = self.dataframe['class']
 
@@ -30,8 +30,9 @@ class KDD:
 		return features
 
 	def get_data(self):
-		names = self.feature_names.append('class')
-		return pd.read_csv(self.data_file, header=None, names=self.feature_names)
+		header = self.feature_names[:]
+		header.append('class')
+		return pd.read_csv(self.data_file, header=None, names=header)
 	
 	def get_feature(self, f_name):
 		return self.dataframe[f_name]
@@ -48,4 +49,14 @@ class KDD:
 	def get_standardized_data(self):
 		data_std = (self.data - self.data.mean())/self.data.std()
 		return data_std
-	
+
+	def remove_col(self, l):
+		copy_names = self.feature_names[:]
+		# copy_types = self.feature_types[:]
+		for i in l:
+			name = copy_names[i]
+			print 'removing ' + name
+			index = self.feature_names.index(name)
+			self.feature_names.remove(name)
+			self.feature_types.pop(index)
+			del self.data[name]
