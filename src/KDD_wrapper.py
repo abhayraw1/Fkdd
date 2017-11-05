@@ -1,8 +1,6 @@
 import pandas as pd
 
 class KDD:
-	data_file = ''
-	feature_file =''
 
 	def __init__(self, config):
 		self.data_file = config['data']
@@ -11,6 +9,7 @@ class KDD:
 		self.feature_names = self.get_feature_keys()
 		self.feature_types = self.get_feature_types()
 		self.dataframe = self.get_data()
+		self.len_data = len(self.dataframe)
 		self.data = self.dataframe.drop('class',1)
 		self.categorical_to_cont()
 		self.labels = self.dataframe['class']
@@ -32,7 +31,8 @@ class KDD:
 	def get_data(self):
 		header = self.feature_names[:]
 		header.append('class')
-		return pd.read_csv(self.data_file, header=None, names=header)
+		data = pd.read_csv(self.data_file, header=None, names=header)
+		return data.sample(frac=1)
 	
 	def get_feature(self, f_name):
 		return self.dataframe[f_name]
@@ -59,3 +59,18 @@ class KDD:
 			self.feature_names.remove(name)
 			self.feature_types.pop(index)
 			del self.data[name]
+
+	def get_train_data(self, train_ratio, labels=True):
+		num_train_rows = int(train_ratio * self.len_data)
+		self.trainX = self.data[:num_train_rows]
+		self.trainY = self.labels[:num_train_rows]
+		self.testX = self.data[num_train_rows:]
+		self.testY = self.labels[num_train_rows:]
+		return self.trainX, self.trainY
+
+	def get_test_data(self, labels=True):
+		try:
+			return self.testX, self.testY
+		except:
+			print 'Call get_train_data first to generate train and test samples'
+			return
