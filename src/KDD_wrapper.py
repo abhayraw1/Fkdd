@@ -52,7 +52,6 @@ class KDD:
 
 	def remove_col(self, l):
 		copy_names = self.feature_names[:]
-		# copy_types = self.feature_types[:]
 		for i in l:
 			name = copy_names[i]
 			print 'removing ' + name
